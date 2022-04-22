@@ -55,5 +55,4 @@ contract Token {
         _transfer(_from, _to, _value);
         return true;
     }
-
 }

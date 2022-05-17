@@ -8,7 +8,11 @@ import {
     exchangeLoaded,
     cancelledOrdersLoaded,
     filledOrdersLoaded,
-    allOrdersLoaded
+    allOrdersLoaded,
+    orderCancelling,
+    orderCancelled,
+    orderFilling,
+    orderFilled
 } from './actions'
 
 export const loadWeb3 = async (dispatch) => {
@@ -78,3 +82,35 @@ export const loadAllOrders = async (exchange, dispatch) => {
     // Add cancelled orders to the redux store
     dispatch(allOrdersLoaded(allOrders))
 }
+
+export const subscribeToEvents = async (exchange, dispatch) => {
+    exchange.events.Cancel({}, (error, event) => {
+        dispatch(orderCancelled(event.returnValues))
+    })
+    exchange.events.Trade({}, (error, event) => {
+        dispatch(orderFilled(event.returnValues))
+    })
+}
+
+export const cancelOrder = (dispatch, exchange, order, account) => {
+    exchange.methods.cancelOrder(order.id).send({ from: account })
+        .on('transactionHash', (hash) => {
+            dispatch(orderCancelling())
+        })
+        .on('error', (error) => {
+            console.log(error)
+            window.alert('There was an error!')
+        })
+}
+
+export const fillOrder = (dispatch, exchange, order, account) => {
+    exchange.methods.fillOrder(order.id).send({ from: account })
+        .on('transactionHash', (hash) => {
+            dispatch(orderFilling())
+        })
+        .on('error', (error) => {
+            console.log(error)
+            window.alert('There was an error!')
+        })
+}
+

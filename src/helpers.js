@@ -11,3 +11,10 @@ export const ether = (wei) => {
 }
 
 export const tokens = ether
+
+export const formatBalance = (balance) => {
+    const precision = 100
+    balance = ether(balance)
+    balance = Math.round(balance * precision) / precision
+    return balance
+}

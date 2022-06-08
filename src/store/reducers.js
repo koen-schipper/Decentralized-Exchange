@@ -76,6 +76,8 @@ function exchange(state = {}, action) {
             return { ...state, balancesLoading: true }
         case 'BALANCES_LOADED':
             return { ...state, balancesLoading: false }
+        case 'ETHER_DEPOSIT_AMOUNT_CHANGED':
+            return { ...state, etherDepositAmount: action.amount }
         default:
             return state
     }

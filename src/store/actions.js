@@ -119,3 +119,9 @@ export function balancesLoaded() {
     }
 }
 
+export function etherDepositAmountChanged(amount) {
+    return {
+        type: 'ETHER_DEPOSIT_AMOUNT_CHANGED',
+        amount
+    }
+}

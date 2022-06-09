@@ -3,7 +3,10 @@ import { Tabs, Tab } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import {
     loadBalances,
-    depositEther
+    depositEther,
+    withdrawEther,
+    depositToken,
+    withdrawToken
 } from "../store/interactions";
 import Spinner from './Spinner';
 import {
@@ -16,9 +19,17 @@ import {
     exchangeEtherBalanceSelector,
     exchangeTokenBalanceSelector,
     balancesLoadingSelector,
-    etherDepositAmountSelector
+    etherDepositAmountSelector,
+    etherWithdrawAmountSelector,
+    tokenDepositAmountSelector,
+    tokenWithdrawAmountSelector
 } from '../store/selectors';
-import { etherDepositAmountChanged } from '../store/actions';
+import {
+    etherDepositAmountChanged,
+    etherWithdrawAmountChanged,
+    tokenDepositAmountChanged,
+    tokenWithdrawAmountChanged
+} from '../store/actions';
 
 const showForm = (props) => {
     const {
@@ -28,6 +39,9 @@ const showForm = (props) => {
         exchangeEtherBalance,
         exchangeTokenBalance,
         etherDepositAmount,
+        etherWithdrawAmount,
+        tokenDepositAmount,
+        tokenWithdrawAmount,
         web3,
         exchange,
         token,
@@ -51,20 +65,11 @@ const showForm = (props) => {
                             <td>{etherBalance}</td>
                             <td>{exchangeEtherBalance}</td>
                         </tr>
-                        <tr>
-                        </tr>
-                        <tr>
-                            <td>DEX</td>
-                            <td>{tokenBalance}</td>
-                            <td>{exchangeTokenBalance}</td>
-                        </tr>
                     </tbody>
                 </table>
-
                 <form className="row" onSubmit={(event) => {
                     event.preventDefault()
                     depositEther(dispatch, exchange, web3, etherDepositAmount, account)
-                    console.log("form submitting...")
                 }}>
                     <div className="col-12 col-sm pr-sm-2">
                         <input
@@ -78,6 +83,32 @@ const showForm = (props) => {
                         <button type="submit" className="btn btn-primary btn-block btn-sm">Deposit</button>
                     </div>
                 </form>
+                <table className="table table-dark table-sm small">
+                    <tbody>
+                        <tr>
+                            <td>DEX</td>
+                            <td>{tokenBalance}</td>
+                            <td>{exchangeTokenBalance}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <form className="row" onSubmit={(event) => {
+                    event.preventDefault()
+                    depositToken(dispatch, exchange, web3, token, tokenDepositAmount, account)
+                }}>
+                    <div className="col-12 col-sm pr-sm-2">
+                        <input
+                            type="text"
+                            placeholder="Token Amount"
+                            onChange={(e) => dispatch( tokenDepositAmountChanged(e.target.value) ) }
+                            className="form-control form-control-sm bg-dark text-white"
+                            required />
+                    </div>
+                    <div className="col-12 col-sm-auto pl-sm-0">
+                        <button type="submit" className="btn btn-primary btn-block btn-sm">Deposit</button>
+                    </div>
+                </form>
+
             </Tab>
             <Tab eventKey="withdraw" title="Withdraw" className="bg-dark">
                 <table className="table table-dark table-sm small">
@@ -94,8 +125,27 @@ const showForm = (props) => {
                         <td>{etherBalance}</td>
                         <td>{exchangeEtherBalance}</td>
                     </tr>
-                    <tr>
-                    </tr>
+                    </tbody>
+                </table>
+                <form className="row" onSubmit={(event) => {
+                    event.preventDefault()
+                    withdrawEther(dispatch, exchange, web3, etherWithdrawAmount, account)
+                }}>
+                    <div className="col-12 col-sm pr-sm-2">
+                        <input
+                            type="text"
+                            placeholder="ETH Amount"
+                            onChange={(e) => dispatch( etherWithdrawAmountChanged(e.target.value) ) }
+                            className="form-control form-control-sm bg-dark text-white"
+                            required />
+                    </div>
+                    <div className="col-12 col-sm-auto pl-sm-0">
+                        <button type="submit" className="btn btn-primary btn-block btn-sm">Withdraw</button>
+                    </div>
+                </form>
+
+                <table className="table table-dark table-sm small">
+                    <tbody>
                     <tr>
                         <td>DEX</td>
                         <td>{tokenBalance}</td>
@@ -103,6 +153,23 @@ const showForm = (props) => {
                     </tr>
                     </tbody>
                 </table>
+
+                <form className="row" onSubmit={(event) => {
+                    event.preventDefault()
+                    withdrawToken(dispatch, exchange, web3, token, tokenWithdrawAmount, account)
+                }}>
+                    <div className="col-12 col-sm pr-sm-2">
+                        <input
+                            type="text"
+                            placeholder="Token Amount"
+                            onChange={(e) => dispatch( tokenWithdrawAmountChanged(e.target.value) ) }
+                            className="form-control form-control-sm bg-dark text-white"
+                            required />
+                    </div>
+                    <div className="col-12 col-sm-auto pl-sm-0">
+                        <button type="submit" className="btn btn-primary btn-block btn-sm">Withdraw</button>
+                    </div>
+                </form>
             </Tab>
         </Tabs>
     )
@@ -146,7 +213,10 @@ function mapStateToProps(state){
         exchangeTokenBalance: exchangeTokenBalanceSelector(state),
         balancesLoading,
         showForm: !balancesLoading,
-        etherDepositAmount: etherDepositAmountSelector(state)
+        etherDepositAmount: etherDepositAmountSelector(state),
+        etherWithdrawAmount: etherWithdrawAmountSelector(state),
+        tokenDepositAmount: tokenDepositAmountSelector(state),
+        tokenWithdrawAmount: tokenWithdrawAmountSelector(state)
     }
 }
 
